@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+<head lang="uk">
+    <meta charset="UTF-8">
+    <title>Асортимент</title>
+</head>
+
+{% block home %}{% endblock %}
+{% block about %}{% endblock %}
+{% block categories %}{% endblock %}
+{% block customers %}{% endblock %}
+
+{% block menu %}
+    <ul class="navbar">
+        <li><a class="scroll-link" href="{% url 'store:index' %}#home">Головна</a></li>
+        <li><a class="scroll-link" href="{% url 'store:index' %}#about">Про Нас</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="categories-selector">
+        <div class="categories-box">
+{#            <h3 style="margin-bottom: 10px;">Оберіть Категорію:</h3>#}
+            <div class="category-buttons">
+
+                <a href="{% url 'store:products' 'all' %}"
+                   class="category-button{% if not category %} chosen{% endif %}">Всі категорії</a>
+
+                {% for cat in cats %}
+                    <a href="{{ cat.get_absolute_url }}"
+                       class="category-button{% if cat == category %} chosen{% endif %}">{{ cat.name }}</a>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <!--  Products  -->
+    <section class="products" id="products">
+        <div class="heading">
+            {% if category %}
+                <h2>{{ category.name }}</h2>
+
+            {% elif request.GET.search %}
+                <h2>Результати пошуку</h2>
+
+            {% else %}
+                <h2>Всі категорії</h2>
+            {% endif %}
+
+        </div>
+        <!-- Container -->
+        <div class="products-container">
+            {% for product in object_list %}
+                <div class="box" data-id="{{ product.id }}">
+                    <img class="fish-image" data-description="{{ product.description }}"
+                         src="{% if product.image %} {{ product.image.url }} {% else %} {% static 'img/ryb1.png' %} {% endif %}"
+                         alt="Рибний Смак">
+                    <h4>{{ product.category }}</h4>
+                    <hr>
+                    <h3 class="item-title">{{ product.name }}</h3>
+                    <br>
+
+                    <div class="content">
+                        <span class="price-weight">{{ product.price|floatformat:"-2" }} грн/{{ product.measure }}</span>
+
+                        <div class="counter">
+                            <button class="counter_control" data-action="minus">-</button>
+                            <div class="counter_amount" data-counter>1</div>
+                            <button class="counter_control" data-action="plus">+</button>
+                        </div>
+                        <div class="cart-button-container">
+                            <div data-cart>
+                                <button data-cart class="add-cart-button">Додати в кошик</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                </div>
+
+                <div id="image-modal" class="product-modal">
+                    <div class="product-modal-content">
+                        <span id="close" class="close">&times;</span>
+                        <h4>{{ product.category }}</h4>
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-modal-description"></p>
+                        <img id="product-modal-image" class="product-modal-image" src="" alt="Modal Image">
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+        <div id="successModal" class="product-modal">
+            <div class="product-modal-content"
+                 style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p>Замовлення успішно оформлено!</p>
+                <br>
+                <p>Перевірте, будь ласка, ваш E-mail для отримання підтвердження.</p>
+                <br>
+                <p>Дякуємо за покупку та бажаємо вам чудового дня!</p>
+                <br>
+                <img src="{% static 'img/logo.png' %}" alt="Рибний смак" style="width: 200px;">
+                <br>
+            </div>
+        </div>
+
+    </section>
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                   class="large-text tooltip-last"
+                   data-tooltip="Попередня сторінка">&laquo;</a>
+            {% else %}
+                <a href="" class="large-text tooltip disabled"
+                   data-tooltip="Попередня сторінка">&laquo;</a>
+            {% endif %}
+
+            {% if page_obj.number == 1 %}
+                <a href="" class="active tooltip" data-tooltip="Поточна сторінка">1</a>
+            {% else %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page=1" class="tooltip">1</a>
+            {% endif %}
+
+            {% if page_obj.number > 3 %}
+                <a href="" class="tooltip default-cursor">...</a>
+            {% endif %}
+
+            {% for p in paginator.page_range %}
+                {% if p > 1 and p < paginator.num_pages %}
+                    {% if p == page_obj.number %}
+                        <a href="" class="active tooltip" data-tooltip="Поточна сторінка">{{ p }}</a>
+                    {% elif p > page_obj.number|add:-2 and p < page_obj.number|add:2 %}
+                        <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ p }}"
+                           class="tooltip">{{ p }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.number < paginator.num_pages|add:-2 %}
+                <a href="#" class="tooltip default-cursor">...</a>
+            {% endif %}
+
+            {% if page_obj.number == paginator.num_pages %}
+                <a href="#" class="active tooltip" data-tooltip="Поточна сторінка">{{ paginator.num_pages }}</a>
+            {% else %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ paginator.num_pages }}"
+                   class="tooltip">{{ paginator.num_pages }}</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.next_page_number }}"
+                   class="large-text tooltip-last"
+                   data-tooltip="Наступна сторінка">&raquo;</a>
+            {% else %}
+                <a href="" class="large-text tooltip disabled"
+                   data-tooltip="Наступна сторінка">&raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}

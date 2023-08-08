@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Замовлення</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body>
+
+    <div id="loadingAnimation">
+        <i class="fas fa-spinner fa-spin fa-3x"></i>
+    </div>
+
+<script>
+    function closeCartModal() {
+        const cartModal = document.getElementById('cart-modal');
+        cartModal.style.display = 'none';
+    }
+
+    function closeSuccessModal() {
+        const successModal = document.getElementById('successModal');
+        successModal.style.display = 'none';
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    function showLoadingAnimation() {
+        document.getElementById('loadingAnimation').style.display = 'flex';
+    }
+
+    function hideLoadingAnimation() {
+        document.getElementById('loadingAnimation').style.display = 'none';
+    }
+
+    function handleSuccessfulOrder() {
+        setTimeout(() => {
+            localStorage.removeItem('shoppingCart');
+            const cartWrapper = document.querySelector('.cart-wrapper');
+            cartWrapper.innerHTML = '';
+            closeCartModal();
+
+            hideLoadingAnimation();
+
+            const successModal = document.getElementById('successModal');
+            successModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            updateCart()
+        }, 100);
+    }
+
+    function closeModal() {
+        const successModal = document.getElementById('successModal');
+        successModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        closeSuccessModal();
+    }
+
+    // При нажатии кнопки "Замовити"
+    document.querySelector('#orderButton').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        // Собираем данные из формы
+        const phone = document.querySelector('#userPhone').value;
+        const email = document.querySelector('#userEmail').value;
+        const city = document.querySelector('#userCity').value;
+        const address = document.querySelector('#userAddress').value;
+        const total_price = document.querySelector('#totalPrice').textContent;
+
+        // Validate phone format
+        const ukrainianPhoneNumberPattern = /^(\+38\s?)?(\(\d{2}\)|\d{2}|\d{3})[-\s]?(\d{3}[-\s]?|\d{2}[-\s]?)\d{2}[-\s]?\d{2}$/;
+        if (!phone.match(ukrainianPhoneNumberPattern)) {
+            alert('Введіть правильний номер телефону (10 цифр). Наприклад: 0501234567');
+            return;
+        }
+
+        // Validate email format
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email.match(emailPattern)) {
+            alert('Введіть правильний e-mail: example@gmail.com');
+            return;
+        }
+
+
+        if (!phone || !email || !city || !address) {
+            alert('Будь ласка, заповніть усі поля');
+            return;
+        }
+        showLoadingAnimation();
+
+        // Получаем данные из localStorage
+        const cartData = JSON.parse(localStorage.getItem('shoppingCart'));
+
+        // Формируем данные для отправки на сервер
+        const formData = new FormData();
+        formData.append('phone', phone);
+        formData.append('email', email);
+        formData.append('city', city);
+        formData.append('address', address);
+        formData.append('total_price', total_price);
+        formData.append('cartData', JSON.stringify(cartData)); // Add cart data as a JSON string
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        // Отправляем данные на сервер
+        fetch('{% url "store:handle_order" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            handleSuccessfulOrder();
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    });
+</script>
+
+</body>
+</html>
