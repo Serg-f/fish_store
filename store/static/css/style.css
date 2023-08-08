@@ -13,7 +13,7 @@
 /* Variables */
 :root {
     --main-color: rgba(60, 78, 92, 1);
-    --main-color-border: rgba(60, 78, 92, 0.3);
+    --main-color-border: rgba(60, 78, 92, 0.7);
     --second-color: #edeae3;
     --text-color: #1b1b1b;
     --bg-color: #fff;
@@ -112,7 +112,7 @@ body {
     background: url(../img/bg.jpg) no-repeat center;
     background-size: cover;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(17rem,auto));
+    grid-template-columns: repeat(auto-fit, minmax(22rem,auto));
     align-items: center;
     gap: 1.5rem;
 }
@@ -270,20 +270,20 @@ body {
 }
 
 @media (min-width: 992px) {
+
     .footer {
         margin-top: auto;
         display: grid;
-        grid-template-columns: repeat(5, 1fr); /* 5 столбцов равного размера */
+        grid-template-columns: repeat(5, 1fr);
         gap: 1.5rem;
         background: var(--second-color);
     }
 }
 
-/* Определение стиля для маленьких экранов */
 @media (max-width: 991px) {
     .footer {
         display: grid;
-        grid-template-columns: 1fr; /* Одноколоночный вид */
+        grid-template-columns: 1fr;
         gap: 1.5rem;
         background: var(--second-color);
     }
@@ -489,9 +489,9 @@ body {
 
 .products-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, auto));
+    grid-template-columns: repeat(auto-fill, minmax(400px, auto));
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 
@@ -506,7 +506,6 @@ body {
     height: 100%;
     border: 1px solid var(--main-color-border);
     background: var(--main-blue-color) ;
-    /*box-shadow: var(--box-shadow);*/
 }
 
 .products-container img {
@@ -792,7 +791,13 @@ body {
     }
 }
 
-@media (max-width: 991px){
+@media (max-width: 992px){
+    .categories-selector{
+        margin-top: 190px;
+    }
+    header.show {
+        padding: 40px;
+    }
     header {
         padding: 16px 4%;
     }
@@ -805,9 +810,16 @@ body {
 }
 
 @media (max-width: 768px) {
-    header {
-        padding: 12px 4%;
+    .products-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, auto));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
     }
+    header.show {
+        padding: 30px;
+    }
+
     #menu-icon {
         display: initial;
         font-size: 40px;
@@ -837,9 +849,6 @@ body {
     .about {
         align-items: center;
     }
-    .intro-container {
-        margin-top: 100px;
-    }
     .categories-box {
         margin-left: 20px;
         margin-right: 20px;
@@ -848,13 +857,56 @@ body {
         max-width: 150px;
     }
     .categories-selector {
-        margin-top: 130px;
+        margin-top: 160px;
     }
+}
+@media (max-width: 791px) {
+    .intro-container {
+        margin-top: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-container {
+        margin-top: 160px;
+    }
+}
+@media (max-width: 480px) {
+    .intro-container {
+        margin-top: 150px;
+    }
+    .home{
+        min-height: 70vh;
+    }
+}
 
 
+@media (max-width: 380px) {
+    .intro-container {
+        margin-top: 150px;
+        max-width: 330px;
+        margin-left: 1px;
+    }
+    .home-img {
+        max-width: 330px;
+    }
+    .home{
+        min-height: 70vh;
+    }
 }
 
 @media (max-width: 360px) {
+    .intro-container {
+        margin-top: 90px;
+    }
+
+}
+
+
+@media (max-width: 360px) {
+    header.show {
+        padding: 20px;
+    }
     .category-button {
         max-width: 140px;
     }
@@ -944,10 +996,15 @@ button.counter_control {
 }
 
 
+.pagination-wrapper {
+    max-width: 500px;
+    margin: 0 auto; /* Center the outer container horizontally */
+}
 
 .pagination {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 10px 0;
     gap: 4px;
     margin-bottom: 10px;
@@ -955,7 +1012,6 @@ button.counter_control {
 
 .pagination a {
     color: black;
-    padding: 4px 18px;
     text-decoration: none;
     transition: background-color .3s;
     border-radius: 4px;
@@ -964,9 +1020,68 @@ button.counter_control {
     display: flex;
     justify-content: center;
     align-items: center;
-        width: 50px;
-        height: 35px;
+    width: 50px;
+    height: 35px;
 }
+
+@media screen and (max-width: 600px) {
+    .pagination {
+        gap: 2px;
+    }
+    .pagination a {
+        width: 40px;
+        height: 30px;
+        font-size: 16px;
+    }
+    .large-text.tooltip-last {
+        font-size: 25px !important;
+    }
+    .large-text.tooltip-last #text {
+        padding: 30px !important;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .pagination {
+        gap: 1px;
+    }
+    .pagination a {
+        width: 36px;
+        height: 26px;
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 405px) {
+    .pagination-wrapper {
+        max-width: 350px;
+}
+    .pagination {
+        gap: 1px;
+    }
+    .pagination a {
+        width: 34px;
+        height: 28px;
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 405px) {
+    .pagination-wrapper {
+        max-width: 350px;
+}
+    .pagination {
+        gap: 1px;
+    }
+    .pagination a {
+        width: 32px;
+        height: 26px;
+        font-size: 16px;
+    }
+}
+
+
+
 
 .pagination a.active {
     background-color: var(--main-color);
@@ -1005,7 +1120,7 @@ button.counter_control {
     border-radius: 4px;
     opacity: 0;
     pointer-events: none;
-    width: 150px;
+    width: 100px;
     text-align: center;
 }
 
@@ -1038,18 +1153,31 @@ button.counter_control {
     pointer-events: none;
 }
 
-#siteLogo {
+
+
+.animation-item {
     transition: all 0.5s ease;
     transform: translateY(-100%);
     opacity: 0;
 }
 
-#siteLogo.show-logo {
+.animation-item.show-item {
     transform: translateY(0);
     opacity: 1;
 }
 
+.animation-item-second {
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.animation-item-second.show-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 header {
+    background-color: var(--text-color);
     position: fixed;
     width: 100%;
     top: 0;
@@ -1059,12 +1187,12 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 18px 100px;
-    transition: opacity 0.4s ease, transform 0.3s ease; /* Добавили transform здесь */
-    opacity: 0; /* Первоначальная непрозрачность */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity: 0;
 }
 
 header.show {
-    opacity: 1; /* Полная прозрачность при добавлении класса "show" */
+    opacity: 1;
 }
 
 header.hide {
@@ -1072,7 +1200,6 @@ header.hide {
 }
 
 header.shadow {
-    background: var(--text-color);
     box-shadow: var(--box-shadow);
 }
 

@@ -12,14 +12,14 @@
 {% block customers %}{% endblock %}
 
 {% block menu %}
-    <ul class="navbar">
+    <ul class="navbar animation-item">
         <li><a class="scroll-link" href="{% url 'store:index' %}#home">Головна</a></li>
         <li><a class="scroll-link" href="{% url 'store:index' %}#about">Про Нас</a></li>
     </ul>
 {% endblock %}
 
 {% block content %}
-    <div class="categories-selector">
+    <div class="categories-selector animation-item">
         <div class="categories-box">
 {#            <h3 style="margin-bottom: 10px;">Оберіть Категорію:</h3>#}
             <div class="category-buttons">
@@ -51,12 +51,13 @@
 
         </div>
         <!-- Container -->
+        {% if object_list %}
         <div class="products-container">
             {% for product in object_list %}
                 <div class="box" data-id="{{ product.id }}">
                     <img class="fish-image" data-description="{{ product.description }}"
                          src="{% if product.image %} {{ product.image.url }} {% else %} {% static 'img/ryb1.png' %} {% endif %}"
-                         alt="Рибний Смак">
+                         alt="{{ product.alt }}">
                     <h4>{{ product.category }}</h4>
                     <hr>
                     <h3 class="item-title">{{ product.name }}</h3>
@@ -86,12 +87,15 @@
                         <h4>{{ product.category }}</h4>
                         <h3>{{ product.name }}</h3>
                         <p class="product-modal-description"></p>
-                        <img id="product-modal-image" class="product-modal-image" src="" alt="Modal Image">
+                        <img id="product-modal-image" class="product-modal-image" src="" alt="{{ product.alt }}">
                     </div>
                 </div>
 
             {% endfor %}
         </div>
+        {% else %}
+            <div>Товарів не знайдено</div>
+        {% endif %}
 
         <div id="successModal" class="product-modal">
             <div class="product-modal-content"
@@ -110,56 +114,58 @@
 
     </section>
     {% if page_obj.has_other_pages %}
-        <div class="pagination">
-            {% if page_obj.has_previous %}
-                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.previous_page_number }}"
-                   class="large-text tooltip-last"
-                   data-tooltip="Попередня сторінка">&laquo;</a>
-            {% else %}
-                <a href="" class="large-text tooltip disabled"
-                   data-tooltip="Попередня сторінка">&laquo;</a>
-            {% endif %}
-
-            {% if page_obj.number == 1 %}
-                <a href="" class="active tooltip" data-tooltip="Поточна сторінка">1</a>
-            {% else %}
-                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page=1" class="tooltip">1</a>
-            {% endif %}
-
-            {% if page_obj.number > 3 %}
-                <a href="" class="tooltip default-cursor">...</a>
-            {% endif %}
-
-            {% for p in paginator.page_range %}
-                {% if p > 1 and p < paginator.num_pages %}
-                    {% if p == page_obj.number %}
-                        <a href="" class="active tooltip" data-tooltip="Поточна сторінка">{{ p }}</a>
-                    {% elif p > page_obj.number|add:-2 and p < page_obj.number|add:2 %}
-                        <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ p }}"
-                           class="tooltip">{{ p }}</a>
-                    {% endif %}
+        <div class="pagination-wrapper">
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                       class="large-text tooltip-last"
+                       data-tooltip="Попередня сторінка">&laquo;</a>
+                {% else %}
+                    <a href="" class="large-text tooltip disabled"
+                       data-tooltip="Попередня сторінка">&laquo;</a>
                 {% endif %}
-            {% endfor %}
 
-            {% if page_obj.number < paginator.num_pages|add:-2 %}
-                <a href="#" class="tooltip default-cursor">...</a>
-            {% endif %}
+                {% if page_obj.number == 1 %}
+                    <a href="" class="active tooltip" data-tooltip="Поточна сторінка">1</a>
+                {% else %}
+                    <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page=1" class="tooltip">1</a>
+                {% endif %}
 
-            {% if page_obj.number == paginator.num_pages %}
-                <a href="#" class="active tooltip" data-tooltip="Поточна сторінка">{{ paginator.num_pages }}</a>
-            {% else %}
-                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ paginator.num_pages }}"
-                   class="tooltip">{{ paginator.num_pages }}</a>
-            {% endif %}
+                {% if page_obj.number > 3 %}
+                    <a href="" class="tooltip default-cursor">...</a>
+                {% endif %}
 
-            {% if page_obj.has_next %}
-                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.next_page_number }}"
-                   class="large-text tooltip-last"
-                   data-tooltip="Наступна сторінка">&raquo;</a>
-            {% else %}
-                <a href="" class="large-text tooltip disabled"
-                   data-tooltip="Наступна сторінка">&raquo;</a>
-            {% endif %}
+                {% for p in paginator.page_range %}
+                    {% if p > 1 and p < paginator.num_pages %}
+                        {% if p == page_obj.number %}
+                            <a href="" class="active tooltip" data-tooltip="Поточна сторінка">{{ p }}</a>
+                        {% elif p > page_obj.number|add:-2 and p < page_obj.number|add:2 %}
+                            <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ p }}"
+                               class="tooltip">{{ p }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.number < paginator.num_pages|add:-2 %}
+                    <a href="#" class="tooltip default-cursor">...</a>
+                {% endif %}
+
+                {% if page_obj.number == paginator.num_pages %}
+                    <a href="#" class="active tooltip" data-tooltip="Поточна сторінка">{{ paginator.num_pages }}</a>
+                {% else %}
+                    <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ paginator.num_pages }}"
+                       class="tooltip">{{ paginator.num_pages }}</a>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                    <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}page={{ page_obj.next_page_number }}"
+                       class="large-text tooltip-last"
+                       data-tooltip="Наступна сторінка">&raquo;</a>
+                {% else %}
+                    <a href="" class="large-text tooltip disabled"
+                       data-tooltip="Наступна сторінка">&raquo;</a>
+                {% endif %}
+            </div>
         </div>
     {% endif %}
 

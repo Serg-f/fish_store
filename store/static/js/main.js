@@ -1,59 +1,72 @@
+// Animations
 window.onload = () => {
-  let header = document.querySelector('header');
-  header.classList.add('show');
-  setTimeout(() => {
-    header.classList.add('show');
-  }, 10);
-  let heading = document.querySelector('.products .heading');
-  let productsContainer = document.querySelector('.products .products-container');
-  setTimeout(() => {
-      heading.classList.add('show');
-      productsContainer.classList.add('show');
-  }, 10);
-  let siteLogo = document.getElementById('siteLogo');
-  setTimeout(() => {
-    siteLogo.classList.add('show-logo');
-  }, 10);
+  const header = document.querySelector('header');
+  const heading = document.querySelector('.products .heading');
+  const productsContainer = document.querySelector('.products .products-container');
+  const animationItems = document.querySelectorAll('.animation-item');
+  const introContainers = document.querySelectorAll('.animation-item-second');
 
-  let search = document.querySelector('.search-box');
-  let navbar = document.querySelector('.navbar');
-  document.querySelector('#search-icon').onclick = () => {
-    search.classList.toggle('active');
-    navbar.classList.remove('active');
-  };
+  initializeElements(header, heading, productsContainer, animationItems, introContainers);
+  setupEventListeners();
+  handleScrollEvents(header);
+};
 
-  let searchInput = document.querySelector('#search-input');
+function initializeElements(header, heading, productsContainer, animationItems, introContainers) {
+  introContainers.forEach((item) => {
+    item.classList.add('animation-item-second');
+    setTimeout(() => item.classList.add('show-item'), 10);
+  });
 
-  searchInput.addEventListener('keyup', function(e) {
+  setTimeout(() => header.classList.add('show'), 10);
+  setTimeout(() => {
+    heading.classList.add('show');
+    productsContainer.classList.add('show');
+  }, 10);
+  setTimeout(() => {
+    animationItems.forEach(item => item.classList.add('show-item'));
+  }, 10);
+}
+
+function setupEventListeners() {
+  const search = document.querySelector('.search-box');
+  const navbar = document.querySelector('.navbar');
+  const searchInput = document.querySelector('#search-input');
+
+  document.querySelector('#search-icon').onclick = () => toggleSearchAndNavbar(search, navbar);
+  document.querySelector('#menu-icon').onclick = () => toggleMenuAndSearch(navbar, search);
+
+  searchInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
       window.location.href = '/search?search=' + e.target.value;
     }
   });
 
-  document.querySelector('#menu-icon').onclick = () => {
-    navbar.classList.toggle('active');
-    search.classList.remove('active');
-  };
-
   window.onscroll = () => {
     navbar.classList.remove('active');
     search.classList.remove('active');
   };
+}
 
-  if (window.location.pathname !== '/') {
-    header.style.backgroundColor = '#1b1b1b';
-  }
+function toggleSearchAndNavbar(search, navbar) {
+  search.classList.toggle('active');
+  navbar.classList.remove('active');
+}
 
+function toggleMenuAndSearch(navbar, search) {
+  navbar.classList.toggle('active');
+  search.classList.remove('active');
+}
+
+function handleScrollEvents(header) {
   let lastScrollTop = 0;
-  window.addEventListener('scroll', () => {
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  function scrollHandler() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
     if (scrollTop > lastScrollTop) {
-      header.classList.add('hide');
-      header.classList.add('shadow');
+      header.classList.add('hide', 'shadow');
     } else {
-      header.classList.remove('hide');
-      header.classList.remove('shadow');
+      header.classList.remove('hide', 'shadow');
     }
 
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
@@ -61,8 +74,14 @@ window.onload = () => {
     if (window.location.pathname === '/') {
       header.classList.toggle('shadow', window.scrollY > 0);
     }
+  }
+
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(scrollHandler);
   });
-};
+}
+// Animations
+
 
 // HOME LINK
 // Get the scroll-link element
@@ -95,14 +114,14 @@ function scrollToElement(elementId) {
 
 // JavaScript код для плавной прокрутки с учетом отступа
 document.addEventListener('DOMContentLoaded', function() {
-  var scrollLinks = document.querySelectorAll('.scroll-link');
+  const scrollLinks = document.querySelectorAll('.scroll-link');
 
   scrollLinks.forEach(function(link) {
     link.addEventListener('click', function(event) {
       event.preventDefault();
-      var target = document.querySelector(link.getAttribute('href'));
-      var headerHeight = document.querySelector('header').offsetHeight; // Получаем высоту заголовка
-      var targetPosition = target.offsetTop - headerHeight;
+      const target = document.querySelector(link.getAttribute('href'));
+      const headerHeight = document.querySelector('header').offsetHeight;
+      const targetPosition = target.offsetTop - headerHeight;
 
       window.scrollTo({
         top: targetPosition,
@@ -204,7 +223,6 @@ document.addEventListener('keydown', (event) => {
     document.body.style.overflow = 'auto';
   }
 });
-
 
 
 
